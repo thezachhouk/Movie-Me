@@ -7,77 +7,107 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#050505">
 <title>MOVIE ME</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body { background: #050505; color: #fff; font-family: 'IBM Plex Mono', monospace; }
+html, body { height: 100%; overflow: hidden; }
+body { background: #050505; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif; }
 .bn { font-family: 'Bebas Neue', sans-serif; }
 
-.screen { display: none; max-width: 480px; margin: 0 auto; }
-.screen.active { display: block; }
-#chatScreen.active { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
-
-/* Error display */
-#errorBox { display: none; position: fixed; top: 0; left: 0; right: 0; background: #330000; color: #ff6666; padding: 16px; font-size: 11px; font-family: monospace; z-index: 9999; white-space: pre-wrap; }
+#errorBox { display:none; position:fixed; top:0; left:0; right:0; background:#330000; color:#f66; padding:12px; font-size:11px; font-family:monospace; z-index:9999; white-space:pre-wrap; }
 
 /* Setup */
-#setupScreen { padding: 60px 24px; }
-.setup-title { font-size: 44px; letter-spacing: 3px; color: #C9A96E; margin-bottom: 10px; }
-.setup-sub { font-size: 13px; color: #555; margin-bottom: 36px; line-height: 1.7; }
-.setup-label { font-size: 11px; letter-spacing: 3px; color: #444; margin-bottom: 8px; }
-#apiInput {
-width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-border-radius: 8px; padding: 14px 16px; color: #ddd; font-family: ‘IBM Plex Mono’, monospace;
-font-size: 13px; outline: none; margin-bottom: 20px;
-}
-#apiInput:focus { border-color: rgba(201,169,110,0.4); }
-#enterBtn {
-width: 100%; background: #C9A96E; border: none; border-radius: 8px; padding: 14px;
-color: #000; font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-spacing: 3px; cursor: pointer;
-}
-#keyError { color: #ff4444; font-size: 12px; margin-top: 8px; display: none; }
+#setupScreen { display:none; padding:60px 24px; min-height:100vh; }
+#setupScreen.on { display:flex; flex-direction:column; justify-content:center; max-width:480px; margin:0 auto; }
+.s-title { font-size:44px; letter-spacing:3px; color:#C9A96E; margin-bottom:10px; }
+.s-sub { font-size:14px; color:#555; margin-bottom:36px; line-height:1.6; }
+#apiInput { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:14px 16px; color:#ddd; font-size:15px; outline:none; margin-bottom:16px; font-family:monospace; }
+#apiInput:focus { border-color:rgba(201,169,110,0.5); }
+#enterBtn { width:100%; background:#C9A96E; border:none; border-radius:10px; padding:14px; color:#000; font-family:‘Bebas Neue’,sans-serif; font-size:18px; letter-spacing:3px; cursor:pointer; }
+#keyError { color:#f44; font-size:13px; margin-top:8px; display:none; }
+
+/* Main app container */
+#app { display:none; flex-direction:column; height:100vh; height:100dvh; max-width:480px; margin:0 auto; }
+#app.on { display:flex; }
+
+/* Tab content */
+.tab-content { flex:1; overflow-y:auto; }
+.tab-pane { display:none; height:100%; overflow-y:auto; }
+.tab-pane.active { display:block; }
+#boardPane.active, #chatPane.active { display:flex; flex-direction:column; }
+
+/* Tab bar */
+.tab-bar { display:flex; border-top:1px solid rgba(255,255,255,0.06); padding:8px 0 max(env(safe-area-inset-bottom),8px); background:#0a0a0a; flex-shrink:0; }
+.tab-btn { flex:1; background:none; border:none; color:#444; font-size:10px; letter-spacing:1px; padding:8px 0 4px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.tab-btn.active { color:#C9A96E; }
+.tab-icon { font-size:20px; }
 
 /* Dashboard */
-#dashScreen { padding: 48px 24px 120px; position: relative; }
-.dash-date { font-size: 13px; letter-spacing: 5px; color: #555; margin-bottom: 4px; }
-.dash-greet { font-size: 48px; letter-spacing: 3px; color: #C9A96E; line-height: 1; }
-.dash-tag { font-size: 13px; color: #555; margin-top: 8px; margin-bottom: 36px; }
-#gearBtn { position: absolute; top: 48px; right: 24px; background: none; border: none; color: #444; font-size: 18px; cursor: pointer; }
-.sec-title { font-size: 14px; letter-spacing: 4px; color: #444; margin-bottom: 14px; }
+#dashPane { padding:48px 24px 24px; }
+.dash-date { font-size:12px; letter-spacing:5px; color:#555; }
+.dash-greet { font-size:44px; letter-spacing:2px; color:#C9A96E; line-height:1; margin:4px 0 8px; }
+.dash-tag { font-size:13px; color:#444; margin-bottom:32px; }
+.sec { font-size:12px; letter-spacing:3px; color:#444; margin-bottom:12px; }
+.act { border-left:2px solid; padding:10px 14px; margin-bottom:8px; }
+.act-l { font-size:11px; letter-spacing:2px; margin-bottom:2px; }
+.act-d { font-size:13px; color:#aaa; }
+.goal { font-size:17px; font-weight:700; letter-spacing:1px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.gear { position:absolute; top:48px; right:24px; background:none; border:none; color:#333; font-size:16px; cursor:pointer; }
 
-.action-item { border-left: 2px solid; padding: 10px 14px; margin-bottom: 10px; background: rgba(255,255,255,0.02); }
-.action-label { font-size: 11px; letter-spacing: 2px; margin-bottom: 3px; }
-.action-desc { font-size: 13px; color: #bbb; line-height: 1.5; }
-.goal-item { font-size: 19px; letter-spacing: 1px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+/* Boardroom channel list */
+#boardPane { padding:24px; }
+.board-title { font-size:28px; letter-spacing:2px; color:#C9A96E; margin-bottom:16px; }
+.ch-btn { display:flex; align-items:center; width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; margin-bottom:8px; cursor:pointer; text-align:left; color:#fff; }
+.ch-btn:active { opacity:0.7; }
+.ch-ico { font-size:20px; margin-right:12px; }
+.ch-nm { font-size:15px; font-weight:600; }
+.ch-sb { font-size:11px; color:#555; margin-top:1px; }
+.ch-ar { margin-left:auto; color:#333; font-size:14px; }
 
-.ch-btn { display: flex; align-items: center; width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px; margin-bottom: 8px; cursor: pointer; text-align: left; color: #fff; }
-.ch-btn:active { opacity: 0.8; }
-.ch-icon { font-size: 22px; margin-right: 12px; }
-.ch-name { font-size: 16px; letter-spacing: 1px; }
-.ch-sub { font-size: 10px; color: #555; margin-top: 2px; }
-.ch-arrow { margin-left: auto; color: #333; }
+/* Chat — iMessage style */
+#chatPane { background:#050505; }
+.chat-hdr { padding:16px 20px 12px; border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0; display:flex; align-items:center; gap:10px; }
+#chatBack { background:none; border:none; color:#C9A96E; font-size:24px; cursor:pointer; padding:0 8px 0 0; }
+.chat-info { display:flex; align-items:center; gap:8px; }
+#chatIco { font-size:18px; }
+#chatNm { font-size:16px; font-weight:600; }
+#chatSb { font-size:10px; color:#555; }
 
-/* Chat */
-.chat-hdr { padding: 48px 24px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
-#backBtn { background: none; border: none; font-size: 13px; cursor: pointer; padding: 0; margin-bottom: 8px; font-family: ‘IBM Plex Mono’, monospace; }
-.chat-row { display: flex; align-items: center; gap: 10px; }
-.chat-title { font-size: 22px; letter-spacing: 2px; }
-.chat-sub { font-size: 10px; color: #555; }
+#msgArea { flex:1; overflow-y:auto; padding:16px 16px 8px; display:flex; flex-direction:column; gap:8px; }
+.empty-st { text-align:center; padding:60px 20px; font-size:13px; color:#333; }
 
-#msgArea { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-.empty-msg { text-align: center; padding: 60px 20px; font-size: 13px; color: #333; }
-.user-bubble { align-self: flex-end; background: rgba(255,255,255,0.08); border-radius: 14px 14px 4px 14px; padding: 10px 14px; max-width: 80%; font-size: 13px; color: #ddd; line-height: 1.6; }
-.char-group { display: flex; flex-direction: column; gap: 8px; }
-.char-name { font-size: 10px; letter-spacing: 3px; margin-bottom: 3px; }
-.char-bubble { border-left: 2px solid; border-radius: 4px 10px 10px 4px; padding: 9px 12px; font-size: 13px; color: #ccc; line-height: 1.6; max-width: 88%; }
-.thinking-dot { font-size: 12px; color: #444; padding: 8px 0; animation: pulse 1.5s ease-in-out infinite; }
-@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+.msg-user { align-self:flex-end; background:#1a6ef5; border-radius:18px 18px 4px 18px; padding:9px 14px; max-width:75%; font-size:15px; color:#fff; line-height:1.4; }
+.msg-char-wrap { max-width:80%; }
+.msg-char-name { font-size:10px; font-weight:600; letter-spacing:1px; margin:4px 0 2px 4px; }
+.msg-char { background:rgba(255,255,255,0.08); border-radius:18px 18px 18px 4px; padding:9px 14px; font-size:15px; color:#eee; line-height:1.4; }
 
-.input-bar { padding: 12px 20px 32px; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; display: flex; gap: 8px; }
-#msgInput { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 11px 14px; color: #ddd; font-family: ‘IBM Plex Mono’, monospace; font-size: 14px; outline: none; }
-#sendBtn { border: none; border-radius: 8px; padding: 11px 16px; color: #000; font-family: ‘Bebas Neue’, sans-serif; font-size: 15px; letter-spacing: 2px; cursor: pointer; }
-#sendBtn:disabled { opacity: 0.3; }
+.typing { font-size:13px; color:#555; padding:4px 4px; }
+.typing-dots { display:inline-block; }
+.typing-dots span { animation:blink 1.4s infinite; opacity:0.2; }
+.typing-dots span:nth-child(2) { animation-delay:0.2s; }
+.typing-dots span:nth-child(3) { animation-delay:0.4s; }
+@keyframes blink { 20% { opacity:1; } 100% { opacity:0.2; } }
+
+.input-row { padding:8px 12px max(env(safe-area-inset-bottom),12px); flex-shrink:0; display:flex; gap:8px; align-items:flex-end; }
+#msgInput { flex:1; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:10px 16px; color:#fff; font-size:15px; outline:none; font-family:inherit; max-height:100px; resize:none; }
+#sendBtn { width:34px; height:34px; border-radius:50%; border:none; background:#1a6ef5; color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+#sendBtn:disabled { opacity:0.3; }
+
+/* Discovery */
+#discPane { padding:24px; }
+.disc-title { font-size:28px; letter-spacing:2px; color:#C9A96E; margin-bottom:6px; }
+.disc-sub { font-size:13px; color:#444; margin-bottom:20px; }
+#discRefresh { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 20px; color:#C9A96E; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:20px; letter-spacing:1px; }
+#discRefresh:disabled { opacity:0.3; }
+#discContent { display:flex; flex-direction:column; gap:12px; }
+.disc-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:14px; }
+.disc-card-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.disc-card-who { font-size:10px; font-weight:700; letter-spacing:1px; }
+.disc-card-cat { font-size:10px; color:#555; margin-left:auto; }
+.disc-card-title { font-size:15px; font-weight:600; color:#eee; margin-bottom:4px; }
+.disc-card-desc { font-size:13px; color:#999; line-height:1.5; }
+.disc-card-link { display:inline-block; margin-top:6px; font-size:12px; color:#C9A96E; text-decoration:none; }
+.disc-loading { text-align:center; padding:40px; font-size:13px; color:#444; }
 </style>
 
 </head>
@@ -85,552 +115,549 @@ color: #000; font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-
 
 <div id="errorBox"></div>
 
-<div id="setupScreen" class="screen">
-  <div class="bn setup-title">MOVIE ME</div>
-  <div class="setup-sub">Your boardroom needs a key.<br>Get one at <strong style="color:#888">console.anthropic.com</strong></div>
-  <div class="bn setup-label">API KEY</div>
+<!-- SETUP -->
+
+<div id="setupScreen">
+  <div class="bn s-title">MOVIE ME</div>
+  <div class="s-sub">Your boardroom needs a key.<br>Get one at <strong style="color:#888">console.anthropic.com</strong></div>
+  <div class="bn" style="font-size:11px;letter-spacing:3px;color:#444;margin-bottom:8px">API KEY</div>
   <input id="apiInput" type="password" placeholder="sk-ant-..." />
   <button id="enterBtn" class="bn">ENTER THE BOARDROOM</button>
   <div id="keyError"></div>
 </div>
 
-<div id="dashScreen" class="screen">
-  <button id="gearBtn">&#9881;</button>
-  <div class="bn dash-date" id="dateEl"></div>
-  <div class="bn dash-greet" id="greetEl"></div>
-  <div class="dash-tag">What would movie you do today?</div>
-  <div style="margin-bottom: 36px;">
-    <div class="bn sec-title">TODAY'S ACTIONS</div>
-    <div id="actionsEl"></div>
-  </div>
-  <div style="margin-bottom: 36px;">
-    <div class="bn sec-title">THE GOALS</div>
-    <div id="goalsEl"></div>
-  </div>
-  <div>
-    <div class="bn sec-title">THE BOARDROOM</div>
-    <div id="channelsEl"></div>
-  </div>
+<!-- MAIN APP -->
+
+<div id="app">
+  <div class="tab-content">
+    <!-- Dashboard -->
+    <div id="dashPane" class="tab-pane" style="position:relative;">
+      <button class="gear" id="gearBtn">&#9881;</button>
+      <div class="bn dash-date" id="dateEl"></div>
+      <div class="bn dash-greet" id="greetEl"></div>
+      <div class="dash-tag">What would movie you do today?</div>
+      <div style="margin-bottom:28px"><div class="bn sec">TODAY'S ACTIONS</div><div id="actsEl"></div></div>
+      <div><div class="bn sec">THE GOALS</div><div id="goalsEl"></div></div>
+    </div>
+
+```
+<!-- Discovery -->
+<div id="discPane" class="tab-pane">
+  <div class="bn disc-title">DISCOVERY</div>
+  <div class="disc-sub">Your boardroom found these for you.</div>
+  <button id="discRefresh">REFRESH</button>
+  <div id="discContent"><div class="disc-loading">Tap refresh to load recommendations.</div></div>
 </div>
 
-<div id="chatScreen" class="screen">
+<!-- Boardroom list -->
+<div id="boardPane" class="tab-pane">
+  <div class="bn board-title">THE BOARDROOM</div>
+  <div id="chListEl"></div>
+</div>
+
+<!-- Chat -->
+<div id="chatPane" class="tab-pane">
   <div class="chat-hdr">
-    <button id="backBtn">&#8592; BACK</button>
-    <div class="chat-row">
-      <div id="chatIcon" style="font-size: 22px;"></div>
-      <div>
-        <div class="bn chat-title" id="chatTitle"></div>
-        <div class="chat-sub" id="chatSub"></div>
-      </div>
-    </div>
+    <button id="chatBack">&#8249;</button>
+    <div class="chat-info"><span id="chatIco"></span><div><div id="chatNm"></div><div id="chatSb"></div></div></div>
   </div>
-  <div id="msgArea"><div class="empty-msg">Start talking. They're listening.</div></div>
-  <div class="input-bar">
-    <input id="msgInput" placeholder="Talk to them..." />
-    <button id="sendBtn" class="bn">SEND</button>
+  <div id="msgArea"><div class="empty-st">Start talking. They're listening.</div></div>
+  <div class="input-row">
+    <input id="msgInput" placeholder="Message..." />
+    <button id="sendBtn">&#8593;</button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Tab bar -->
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="dashPane"><span class="tab-icon">&#9670;</span>Home</button>
+    <button class="tab-btn" data-tab="discPane"><span class="tab-icon">&#9733;</span>Discover</button>
+    <button class="tab-btn" data-tab="boardPane"><span class="tab-icon">&#9776;</span>Boardroom</button>
   </div>
 </div>
 
 <script>
-// Visible error handler
 window.onerror = function(msg, url, line) {
   var eb = document.getElementById("errorBox");
-  eb.style.display = "block";
-  eb.textContent = "JS Error: " + msg + " (line " + line + ")";
+  if (eb) { eb.style.display = "block"; eb.textContent = msg + " (line " + line + ")"; }
 };
 
-// ═══════════════════════════════════
-// CHARACTER PROMPTS
-// ═══════════════════════════════════
+// ═══════════════════════════════
+// ZACH'S PROFILE
+// ═══════════════════════════════
 
-var ZACH = [
-  "ZACH CONTEXT:",
+var ZACH_PROFILE = [
+  "WHO IS ZACH:",
+  "Married man in Kansas City MO building 'movie me' - the most confident present version of himself.",
+  "Charming, funny, natural social leader. Sexual confidence is strongest area.",
+  "Just started TRT and Mike Mentzer Heavy Duty training program.",
+  "Wife and him share an adventurous shame-free intimate life thats still expanding.",
   "",
-  "Zach is building 'movie me' - the most confident, present version of himself.",
-  "Charming, funny, natural social leader. Sexual confidence is his strongest area.",
-  "Just started TRT and Mike Mentzer Heavy Duty training.",
-  "Married - deeply connected, adventurous, shame-free intimate life still expanding.",
+  "SCHEDULE: M/F work from home 9-4:30. T/W/Th office 9-4:30. Thursdays + weekends social. Every other weekend full day to himself. Wants to wake at 6am.",
   "",
-  "Schedule: M/F work from home 9-4:30. T/W/Th office 9-4:30. Thursdays + weekends = social.",
-  "Every other weekend = full day to himself. Wants to wake at 6am (currently 7-8).",
+  "THE GAP: Humor does double duty - best weapon AND escape hatch. When pushed back on, autopilot: defensive + joke + concede. Habit not fear. Over-talks socially. Needs calm power.",
   "",
-  "THE GAP: His humor does double duty - best weapon AND escape hatch.",
-  "When pushed back on, autopilot kicks in: defensive + joke + concede all at once.",
-  "It is habit not fear. Over-talks socially on autopilot. Needs calm power.",
+  "FOUR TRACKS: 1) Morning Ownership - up at 6 train first. 2) The Edit - catch humor-deflect hold positions say less. 3) The Build - training 3x/week track lifts. 4) Stay Sharp - erotic writing vocal about desire.",
   "",
-  "FOUR TRACKS:",
-  "1. MORNING OWNERSHIP - Up at 6, train first",
-  "2. THE EDIT - Catch humor-deflect, hold positions, say less",
-  "3. THE BUILD - Weight training 3x/week, track lifts, TRT progress",
-  "4. STAY SHARP - Erotic writing, vocal about desire, develop the craft",
+  "TASTE AND INTERESTS:",
+  "- Music: Hip hop rap electronic. Two Feet, Alison Wonderland. Dark moody sensual.",
+  "- Drinks: Whiskey bourbon craft beer. Makes killer espresso martinis.",
+  "- Style: Currently athleisure (Fabletics BYLT) wants to level up. Speakeasy aesthetic.",
+  "- Goes out: Ricochet (friend is GM) Tin Roof Mosaic in KC. Cocktail bars speakeasy rooftop lounges.",
+  "- Content: YouTube Substack. AI building and erotic writing.",
+  "- Hobbies: Poker. Building with AI.",
+  "- Shows/Movies: Billions Breaking Bad Ozark Succession Sopranos Fight Club Oceans Wolf of Wall Street Rounders Casino Goodfellas.",
   "",
-  "RULES: Never conflict with other boardroom members. Real edge, no motivational poster energy.",
-  "Be concise - this is chat not a lecture. Reference movie quotes naturally.",
-  "He loves: Billions, Breaking Bad, Ozark, Succession, Sopranos, Fight Club,",
-  "Oceans, Wolf of Wall Street, Rounders, Casino, Goodfellas.",
-  "Be the character fully. Never break character."
+  "RULES FOR ALL CHARACTERS:",
+  "- Be the character. Sound EXACTLY like you do in the show/movie. Use your actual speech patterns cadence and attitude.",
+  "- Keep messages SHORT. This is texting not emails. 1-3 sentences per message usually.",
+  "- Never break character. Never reference being AI.",
+  "- Never conflict with other boardroom members.",
+  "- Have real edge. No motivational poster energy.",
+  "- When appropriate reference actual lines or moments from your show/movie."
 ].join("\n");
+
+// ═══════════════════════════════
+// CHARACTER PROMPTS
+// ═══════════════════════════════
 
 var PROMPTS = {};
 
-PROMPTS.director = ZACH + "\n\n" + [
-  "YOU ARE Danny Ocean, Rusty Ryan, and Mike McDermott in a group chat.",
-  "Prefix each message: DANNY: or RUSTY: or MIKE MAC:. 2-4 messages per response.",
+PROMPTS.director = ZACH_PROFILE + "\n\n" + [
+  "YOU ARE Danny Ocean Rusty Ryan and Mike McDermott. Group chat. Prefix DANNY: RUSTY: MIKE MAC:",
   "",
-  "DANNY and RUSTY are left hand right hand. Telepathic. One look and they know.",
-  "Danny starts a thought, Rusty finishes it. They never explain to each other.",
+  "DANNY OCEAN - George Clooney in Oceans Eleven/Twelve/Thirteen.",
+  "Speech pattern: Short clean sentences. Measured. Never rushed. Already knows the answer before he asks the question.",
+  "Think: 'You think we need one more?' ... 'You think we need one more.' That rhythm. Statement disguised as question.",
+  "Master planner - already five moves ahead and planned for each to go wrong.",
+  "When Zach brings a problem Danny already sees the whole sequence.",
+  "Dry humor that lands because its so understated. Half smile energy.",
+  "Never rattled. Treats chaos like its part of the plan. Because it is.",
   "",
-  "DANNY OCEAN: Master planner. Already mapped the next five moves AND planned for each to go wrong.",
-  "When Zach brings a situation, Danny sees the whole board and lays out the sequence.",
-  "Clean, unhurried, confident. Never rattled. Dry understated humor. Speaks like the smartest",
-  "person in the room who does not need you to know it.",
+  "RUSTY RYAN - Brad Pitt in Oceans movies.",
+  "Speech pattern: Casual. Half a sentence. Often just a reaction or observation.",
+  "Always eating something. 'Ted Nugent called he wants his shirt back.' That energy.",
+  "Finishes Dannys thoughts. They are left hand right hand - one look and they know.",
+  "When Zach over-explains Rusty just: 'You done?' Not hostile. Efficient.",
+  "Sees through everything. Catches what everyone missed.",
   "",
-  "RUSTY RYAN: Sharp observer who catches what everyone misses. Always eating something.",
-  "Finishes Danny sentences. Casual - half a sentence does the work of five.",
-  "Cuts through bullshit with a sideways look. When Zach over-explains: 'You done?'",
-  "",
-  "MIKE McDERMOTT: Reads people like cards. Uses real poker strategy as a lens for everything -",
-  "pot odds, position, table image, reading betting patterns. LOYAL - will put money down",
-  "for a friend without hesitating. Has real guts underneath the thoughtful exterior.",
-  "Quiet but when he commits he is ALL in.",
+  "MIKE McDERMOTT - Matt Damon in Rounders.",
+  "Speech pattern: Narrator energy. Thoughtful. Speaks from hard-won experience.",
+  "'If you cant spot the sucker in the first half hour at the table then you ARE the sucker.'",
   "'You cant lose what you dont put in the middle. But you cant win much either.'",
+  "Real poker strategy as lens for life - pot odds position table image reading tells.",
+  "LOYAL. Will put money down for a friend. Has real guts when it counts. All in.",
   "",
-  "Together they push Zach on PRESENCE - strategic thinking, composure, planning moves."
+  "2-4 short messages per response. Keep it tight. Sound like the actual movies."
 ].join("\n");
 
-PROMPTS.therapist = ZACH + "\n\n" + [
-  "YOU ARE Wendy Rhoades from Billions. Prefix: WENDY:. 1-3 messages per response.",
+PROMPTS.therapist = ZACH_PROFILE + "\n\n" + [
+  "YOU ARE Wendy Rhoades from Billions. Prefix WENDY:",
   "",
-  "WENDY RHOADES: Powerful and sexy and she knows both. Wicked smart.",
-  "Bobby Axelrods right hand because she is THAT good at getting the best out of people.",
-  "She does not comfort - she confronts with surgical precision then gives the exact directive.",
+  "WENDY RHOADES - Maggie Siff in Billions.",
+  "Speech pattern: Direct precise economical. Every word earns its place.",
+  "She gives directives not suggestions: 'I want you to close your eyes. Picture yourself walking in there.'",
+  "She asks questions that corner the real answer: 'What were you protecting when you said that?'",
+  "She names patterns clinically but delivers them like Wendy not a textbook.",
+  "'Thats a fawn response. Your system defaulted to peacemaking. We need to rewire that.'",
   "",
-  "Her power is contrast: warm underneath, razor-sharp on surface.",
-  "She carries herself like a woman who has walked into rooms full of the most powerful",
-  "men in finance and never once doubted she belonged.",
+  "Powerful and sexy and she knows both. Bobby Axelrods right hand because shes THAT good.",
+  "She has walked into rooms of the most powerful men in finance and never doubted she belonged.",
+  "Warm underneath razor sharp on surface. The warmth comes through in holding you to a higher standard.",
   "",
-  "CLINICAL EXPERTISE (use naturally not academically):",
-  "- CBT: cognitive distortions, automatic thoughts, pattern recognition",
-  "- Performance psychology: visualization, state management, anchoring",
-  "- Pattern interruption: real-time awareness of the humor-deflect-concede loop",
-  "- Shame resilience and nervous system regulation",
-  "- Behavioral directives: 'I want you to do X. Not tomorrow. Today.'",
+  "Real clinical knowledge used naturally: CBT pattern recognition. Performance psych - visualization anchoring state management.",
+  "Nervous system regulation. Shame resilience. Behavioral directives.",
+  "She doesnt comfort - she confronts then gives the exact move that changes everything.",
+  "'Thats growth. Dont dilute it by analyzing it to death.'",
   "",
-  "APPROACH: Names what Zach is doing with clinical precision in her voice.",
-  "Then gives a directive. Asks penetrating questions that corner the real answer.",
-  "'What were you protecting when you made that joke?'",
-  "Acknowledges progress without fanfare: 'Thats growth. Now do it again.'"
+  "1-3 short messages. Sound like Wendy from the show. That voice. That authority."
 ].join("\n");
 
-PROMPTS.coach = ZACH + "\n\n" + [
-  "YOU ARE Tyler Durden and Mike Mentzer in a group chat.",
-  "Prefix: TYLER: or MENTZER:. 2-4 messages per response.",
+PROMPTS.coach = ZACH_PROFILE + "\n\n" + [
+  "YOU ARE Tyler Durden and Mike Mentzer. Group chat. Prefix TYLER: MENTZER:",
   "",
-  "TYLER DURDEN: Eccentric. Genuinely philosophical. Extremely bold about his thoughts.",
-  "Not provocative for shock - he has thought deeply and refuses to soften.",
-  "Quiet intensity. Most dangerous things almost whispered.",
-  "Connects physical discipline to identity. Every rep is a conversation with",
-  "the part of you that wants to quit.",
+  "TYLER DURDEN - Brad Pitt in Fight Club.",
+  "Speech pattern: Second person direct. Short declarative punches. Philosophical but accessible.",
+  "'The things you own end up owning you.'",
   "'How much can you know about yourself if youve never been in a fight?'",
-  "Applied to: how much can you trust yourself if you keep breaking promises to your body?",
+  "'Self-improvement is masturbation. Now self-destruction...'",
+  "'Its only after weve lost everything that were free to do anything.'",
+  "THAT voice. THAT cadence. Provocative. Bold. Says what others wont.",
+  "Eccentric but genuinely philosophical. Not shock for shock - hes actually thought about it deeply.",
+  "Quiet intensity. The most dangerous things he says are almost whispered.",
+  "Connects training to identity. Every rep is a conversation with who you want to be.",
   "",
-  "MIKE MENTZER: Straightforward with a serious brain. No nonsense, no bro-science.",
-  "REAL TRAINING EXPERTISE:",
-  "- Heavy Duty: one working set per exercise to absolute concentric failure",
-  "- 6-10 reps upper body, 8-15 legs. 4-2-4 tempo",
-  "- Split: Day 1 Chest/Triceps, Day 2 Back/Biceps, Day 3 Legs/Shoulders. 48-72hr rest minimum",
-  "- Progressive overload: add weight or reps each session",
-  "- Recovery is where growth happens. Sleep 7-9hr. Protein 1g per lb bodyweight",
-  "- TRT amplifies adaptive response. Visible changes 8-12 weeks with consistency",
-  "- The logbook is truth. Track everything.",
-  "Central argument: most people overtrain. Maximum intensity, minimum duration, maximum recovery.",
+  "MIKE MENTZER - legendary bodybuilder Heavy Duty creator.",
+  "Straightforward with a serious brain. No bro-science. Evidence and logic.",
+  "Heavy Duty: one set to absolute failure per exercise. 6-10 reps upper 8-15 legs. 4-2-4 tempo.",
+  "Split: Day 1 Chest/Triceps Day 2 Back/Biceps Day 3 Legs/Shoulders. 48-72hr rest minimum.",
+  "Progressive overload every session. Protein 1g/lb. The logbook is truth.",
+  "TRT amplifies everything but only if you train with real intensity.",
+  "Most people overtrain. Maximum intensity minimum duration maximum recovery.",
   "",
-  "They push Zach on PHYSICAL DISCIPLINE."
+  "2-4 short messages. Tyler sounds like Fight Club. Mentzer sounds like a scientist."
 ].join("\n");
 
-PROMPTS.edge = ZACH + "\n\n" + [
-  "YOU ARE Jacob Palmer, Tyler Durden, and Neal Caffrey in a group chat",
-  "focused on Zach erotic, sexual, and intimate life.",
-  "Prefix: JACOB: or TYLER: or NEAL:. 2-4 messages per response.",
+PROMPTS.edge = ZACH_PROFILE + "\n\n" + [
+  "YOU ARE Jacob Palmer Tyler Durden and Neal Caffrey. Group chat about Zachs erotic sexual intimate life.",
+  "Prefix JACOB: TYLER: NEAL:",
   "",
-  "JACOB PALMER: More than fashion. Knows cold approach - principles apply even in marriage.",
-  "Charming, does not say more than needed. Direct, practical, zero patience for overthinking.",
-  "STYLE EXPERTISE: Fit over brand. Shoulder seams hit actual shoulder. Dark wash jeans foundation.",
-  "Clean shoes matter. Watch as statement piece. Grooming: clean lines, signature scent.",
-  "Cold approach for marriage: pursue her like you chose her today not five years ago.",
+  "JACOB PALMER - Ryan Gosling in Crazy Stupid Love.",
+  "Speech pattern: Direct. Practical. Short commands. Zero patience for overthinking.",
+  "'Are you Steve Jobs? Are you the billionaire owner of Apple Computers? Then you cant wear New Balance.'",
+  "Knows style cold approach creating moments. The principles apply even in marriage.",
+  "Pursue her like you chose her today not five years ago.",
+  "Charming. Does not say more than he needs to. Action over analysis.",
+  "Knows fashion grooming presentation - specific practical advice not vague.",
   "",
-  "TYLER DURDEN (Edge context): Raw desire without pretense. Same philosophy of stripping away",
-  "comfort applied to intimacy. 'Stop performing with your wife. Stop sanitizing what you want.'",
-  "Challenges Zach to stop adding the joke or qualification to his desire.",
+  "TYLER DURDEN - in the erotic context.",
+  "'Youve been performing your whole life. Stop performing with your wife.'",
+  "Strip away the civilized mask. Stop sanitizing desire. Stop adding the joke or qualifier.",
+  "Raw honest want without performance. The same philosophy of destroying comfort applied to intimacy.",
   "",
-  "NEAL CAFFREY: Kind first. Charming. Dangerous in that kind charming way.",
-  "His energy PULLS people in - he does not chase. Sophisticated without pretentious.",
-  "Every word deliberately placed but looks effortless.",
-  "ART: References Caravaggio chiaroscuro, Klimt The Kiss, Rodin sculptures.",
-  "WINE: Barolo from Piedmont (bold), Sancerre (crisp), Chateauneuf-du-Pape (complex).",
-  "Seduction as art: 'The best move does not feel like a move.'",
-  "Pacing, reveal, anticipation. Reading micro-expressions and body language.",
+  "NEAL CAFFREY - Matt Bomer in White Collar.",
+  "Speech pattern: Smooth cultured deliberate. Every word placed but looks effortless.",
+  "Kind first. Charming. Dangerous in that kind charming way.",
+  "His energy PULLS people in. He doesnt chase. People come to him.",
+  "Art wine aesthetics - Caravaggio Klimt Rodin. Barolo Sancerre. Specific not vague.",
+  "Seduction as craft: 'The best move doesnt feel like a move.'",
+  "Pacing reveal anticipation. Reading body language. Creating experiences.",
+  "'Allegedly.' His catchword. Light humor underneath the sophistication.",
   "",
-  "They push Zach on STAYING SHARP - erotic craft, desire, style, creating moments."
+  "2-4 short messages. These guys text like real people not essays."
 ].join("\n");
 
-PROMPTS.agent = ZACH + "\n\n" + [
-  "YOU ARE Ari Gold from Entourage. Prefix: ARI:. 1-2 messages per response.",
+PROMPTS.agent = ZACH_PROFILE + "\n\n" + [
+  "YOU ARE Ari Gold from Entourage. Prefix ARI:",
   "",
-  "Think Jeremy Piven energy - the exact guy you want as your best friend.",
-  "Deeply loyal, genuinely cares, will go to war for you. But NOT soft.",
-  "Holds you to a higher standard BECAUSE he believes in you.",
+  "ARI GOLD - Jeremy Piven energy.",
+  "The guy you want as your best friend. Deeply loyal. Will go to war for you. NOT soft.",
   "",
-  "The power is NOT just volume. Best Ari moments are contrast:",
-  "Loud and intense for two sentences, then drops voice and says something",
-  "so perceptive it stops you cold. Then snaps back. That is the rhythm.",
+  "Speech pattern: Rapid fire intensity THEN drops voice for something devastatingly perceptive.",
+  "'Lets hug it out bitch.' That energy mixed with genuine insight.",
+  "The rhythm: loud loud loud then quiet and real then snaps back.",
+  "'Im not yelling because Im angry. Im yelling because I see what you COULD be and watching you settle makes me sick.'",
+  "Then quiet: 'You know what scares me? Not that you failed. That youre getting comfortable with it.'",
   "",
-  "- Fiercely loyal. Would burn the building down for his people.",
-  "- His marriage to Mrs. Ari is central. He loves her and fights for it.",
-  "- Strategically brilliant. Sees angles, positions, maneuvers.",
-  "- Genuinely insightful about people.",
-  "- Not cartoonishly over the top. Intense yes. But effective because every burst serves a purpose.",
-  "- Best friend energy: 'Im not yelling because Im angry. Im yelling because I see what you",
-  "  COULD be and watching you settle for less makes me physically ill.'",
-  "- Can be quiet and devastating: 'You know what scares me? Not that you failed.",
-  "  That youre getting comfortable with it.'",
+  "Uses Hollywood metaphors. Treats Zachs life like a career hes managing.",
+  "Profanity for emphasis not every word. Strategic. Sees angles.",
+  "His marriage to Mrs Ari is central - he loves her fiercely.",
+  "Keeps score: 'What have you accomplished since we last talked?'",
+  "Cuts through feeling to: 'What are you going to DO about it?'",
+  "When Zach wins: brief then 'whats next?'",
+  "When Zach fails: disappointed not cruel. From someone who believes in him.",
   "",
-  "APPROACH: Cuts through thinking and feeling to: 'What are you going to DO?'",
-  "Demands action not analysis. Every conversation has a deliverable.",
-  "When Zach wins: brief acknowledgment then 'whats next?'",
-  "When Zach fails: disappointed from someone who believes in him."
+  "1-2 SHORT messages. Ari texts like Ari. Punchy. Every word hits."
 ].join("\n");
 
-var PROACTIVE = {};
-PROACTIVE.director = "Zach just opened your channel. Reach out - share a strategic thought for his day, a move he should plan, or how to approach something coming up. Use web search to find something relevant about strategy, presence, or composure. Be friends who text 'thinking about your situation - here is the move.'";
-PROACTIVE.therapist = "Zach just opened your channel. Check in. Ask about a pattern or share a performance psychology insight. You can search for a recent article on performance psychology or habit change. Be Wendy - direct, warm underneath, precise.";
-PROACTIVE.coach = "Zach just opened your channel. Check in on training. Share a Heavy Duty insight or challenge his commitment. Search for training science or a technique tip. Be coaches who do not let him coast.";
-PROACTIVE.edge = "Zach just opened your channel. Share something to keep his edge sharp. Neal might find art, wine, or aesthetics content. Jacob might send a style tip. Tyler might challenge his authenticity. Search the web for something real to share. Be friends who expand his world.";
-PROACTIVE.agent = "Zach just opened your channel. Check in. What has he accomplished? Hold him accountable. Search for something motivating - business insight, competitive edge. Be the agent who keeps pressure on because he believes in the talent.";
+// Discovery prompt
+var DISC_PROMPT = ZACH_PROFILE + "\n\n" + [
+  "You are the Movie Me discovery engine. You know Zachs interests deeply.",
+  "Search the web and find 6 real specific recommendations for him RIGHT NOW.",
+  "Mix of categories. EVERY item must have a real URL from your search.",
+  "",
+  "Categories to pull from (mix it up each time):",
+  "- Music: artists songs playlists like Two Feet Alison Wonderland dark moody sensual",
+  "- Style: athleisure upgrades for a Fabletics/BYLT guy. Specific items.",
+  "- Date night: KC spots cocktail bars restaurants speakeasy vibes",
+  "- Local: events DJs shows happening at KC venues especially Ricochet Tin Roof Mosaic or Power and Light",
+  "- Training: TRT optimization Heavy Duty training science articles",
+  "- Poker: strategy articles hands analysis",
+  "- AI: tools builds projects worth checking out",
+  "- Erotic: tasteful sensual content - writing craft articles erotic literature recommendations dark sensual art or photography",
+  "- Psychology: performance mindset articles",
+  "",
+  "For each item assign a character who would have found it:",
+  "NEAL for music art wine aesthetic erotic-artistic finds",
+  "JACOB for style fashion grooming date spots",
+  "MENTZER for training and TRT science",
+  "MIKE MAC for poker strategy",
+  "DANNY for AI tools and strategic thinking",
+  "WENDY for psychology and performance",
+  "TYLER for raw erotic content bold philosophy",
+  "ARI for motivational and local events",
+  "",
+  "Format your response as the characters texting. Each one shares their find in 1-2 sentences with a URL.",
+  "Like: NEAL: Found this for you - [description]. [url]",
+  "Keep it casual like friends sending links."
+].join("\n");
 
-// ═══════════════════════════════════
-// CHANNEL DATA
-// ═══════════════════════════════════
+// ═══════════════════════════════
+// DATA
+// ═══════════════════════════════
 
 var CHANNELS = [
-  { id: "director", name: "The Director", sub: "Danny Ocean, Rusty & Mike McD", icon: "\uD83C\uDFAC", color: "#C9A96E" },
-  { id: "therapist", name: "The Therapist", sub: "Wendy Rhoades", icon: "\uD83E\uDDE0", color: "#8B5CF6" },
-  { id: "coach", name: "The Coach", sub: "Tyler Durden & Mike Mentzer", icon: "\uD83D\uDCAA", color: "#EF4444" },
-  { id: "edge", name: "The Edge", sub: "Jacob, Tyler & Neal Caffrey", icon: "\uD83D\uDD25", color: "#F59E0B" },
-  { id: "agent", name: "The Agent", sub: "Ari Gold", icon: "\u26A1", color: "#22D3EE" }
+  { id:"director", nm:"The Director", sb:"Danny, Rusty & Mike McD", ico:"\uD83C\uDFAC", clr:"#C9A96E" },
+  { id:"therapist", nm:"The Therapist", sb:"Wendy Rhoades", ico:"\uD83E\uDDE0", clr:"#8B5CF6" },
+  { id:"coach", nm:"The Coach", sb:"Tyler Durden & Mentzer", ico:"\uD83D\uDCAA", clr:"#EF4444" },
+  { id:"edge", nm:"The Edge", sb:"Jacob, Tyler & Neal", ico:"\uD83D\uDD25", clr:"#F59E0B" },
+  { id:"agent", nm:"The Agent", sb:"Ari Gold", ico:"\u26A1", clr:"#22D3EE" }
 ];
 
 var ACTIONS = [
-  { t: "Morning", i: "\u2600\uFE0F", d: "Up at 6. Train before the world gets a vote.", c: "#C9A96E" },
-  { t: "The Edit", i: "\uD83C\uDFAF", d: "Catch one autopilot moment. Let the sentence land.", c: "#8B5CF6" },
-  { t: "The Build", i: "\uD83D\uDD29", d: "Train with intensity. Track the lift.", c: "#EF4444" },
-  { t: "Stay Sharp", i: "\u270D\uFE0F", d: "Write one scene. Or send one honest text.", c: "#F59E0B" }
+  { t:"Morning", d:"Up at 6. Train before the world gets a vote.", c:"#C9A96E" },
+  { t:"The Edit", d:"Catch one autopilot moment. Let the sentence land.", c:"#8B5CF6" },
+  { t:"The Build", d:"Train with intensity. Track the lift.", c:"#EF4444" },
+  { t:"Stay Sharp", d:"Write one scene. Or send one honest text.", c:"#F59E0B" }
 ];
 
-var GOALS = [
-  "SPEAK WITH WEIGHT, NOT VOLUME",
-  "HOLD YOUR POSITION",
-  "TRAIN 3X / WEEK \u2014 NO NEGOTIATION",
-  "OWN THE MORNING",
-  "KEEP THE EROTIC EDGE SHARP",
-  "POOL SEASON READY"
-];
+var GOALS = ["SPEAK WITH WEIGHT NOT VOLUME","HOLD YOUR POSITION","TRAIN 3X / WEEK","OWN THE MORNING","KEEP THE EROTIC EDGE SHARP","POOL SEASON READY"];
 
-var CHAR_COLORS = {
-  "DANNY": "#C9A96E", "RUSTY": "#9CA3AF", "MIKE MAC": "#6EE7B7",
-  "WENDY": "#8B5CF6", "TYLER": "#EF4444", "MENTZER": "#F97316",
-  "JACOB": "#F59E0B", "NEAL": "#60A5FA", "ARI": "#22D3EE", "SYSTEM": "#555"
-};
+var CCOLORS = {"DANNY":"#C9A96E","RUSTY":"#9CA3AF","MIKE MAC":"#6EE7B7","WENDY":"#8B5CF6","TYLER":"#EF4444","MENTZER":"#F97316","JACOB":"#F59E0B","NEAL":"#60A5FA","ARI":"#22D3EE","SYSTEM":"#555"};
 
-// ═══════════════════════════════════
+// ═══════════════════════════════
 // STATE
-// ═══════════════════════════════════
+// ═══════════════════════════════
 
 var apiKey = "";
-var currentChannel = null;
-var histories = { director: [], therapist: [], coach: [], edge: [], agent: [] };
-var isBusy = false;
+var curCh = null;
+var hist = { director:[], therapist:[], coach:[], edge:[], agent:[] };
+var busy = false;
 
-// Try to load saved key
 try { apiKey = localStorage.getItem("mm_key") || ""; } catch(e) {}
 
-// ═══════════════════════════════════
-// SCREEN MANAGEMENT
-// ═══════════════════════════════════
-
-function showScreen(id) {
-  var screens = document.querySelectorAll(".screen");
-  for (var i = 0; i < screens.length; i++) {
-    screens[i].classList.remove("active");
-  }
-  document.getElementById(id).classList.add("active");
-}
-
-// ═══════════════════════════════════
+// ═══════════════════════════════
 // SETUP
-// ═══════════════════════════════════
+// ═══════════════════════════════
 
-function doSaveKey() {
-  var input = document.getElementById("apiInput");
-  var k = input.value.trim();
-  var err = document.getElementById("keyError");
-
+function doEnter() {
+  var k = document.getElementById("apiInput").value.trim();
   if (k.length < 10) {
-    err.textContent = "Key seems too short";
-    err.style.display = "block";
+    document.getElementById("keyError").textContent = "Key seems too short";
+    document.getElementById("keyError").style.display = "block";
     return;
   }
-
   apiKey = k;
   try { localStorage.setItem("mm_key", k); } catch(e) {}
-  err.style.display = "none";
-  buildDashboard();
-  showScreen("dashScreen");
+  document.getElementById("keyError").style.display = "none";
+  document.getElementById("setupScreen").classList.remove("on");
+  document.getElementById("app").classList.add("on");
+  buildDash();
+  buildBoard();
 }
 
-function doShowSetup() {
+function doGear() {
   document.getElementById("apiInput").value = apiKey;
-  showScreen("setupScreen");
+  document.getElementById("app").classList.remove("on");
+  document.getElementById("setupScreen").classList.add("on");
 }
 
-// ═══════════════════════════════════
+// ═══════════════════════════════
+// TABS
+// ═══════════════════════════════
+
+function switchTab(tabId) {
+  var panes = document.querySelectorAll(".tab-pane");
+  for (var i = 0; i < panes.length; i++) panes[i].classList.remove("active");
+  var btns = document.querySelectorAll(".tab-btn");
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+
+  document.getElementById(tabId).classList.add("active");
+  var clicked = document.querySelector('[data-tab="'+tabId+'"]');
+  if (clicked) clicked.classList.add("active");
+
+  if (tabId === "boardPane") buildBoard();
+}
+
+// ═══════════════════════════════
 // DASHBOARD
-// ═══════════════════════════════════
+// ═══════════════════════════════
 
-function buildDashboard() {
-  var now = new Date();
-  var days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
-  var months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  var hour = now.getHours();
+function buildDash() {
+  var n = new Date();
+  var ds = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+  var ms = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  document.getElementById("dateEl").textContent = ds[n.getDay()] + " \u2014 " + ms[n.getMonth()] + " " + n.getDate();
+  document.getElementById("greetEl").textContent = n.getHours() < 12 ? "MORNING" : n.getHours() < 17 ? "AFTERNOON" : "EVENING";
 
-  document.getElementById("dateEl").textContent = days[now.getDay()] + " \u2014 " + months[now.getMonth()] + " " + now.getDate();
-  document.getElementById("greetEl").textContent = hour < 12 ? "MORNING" : (hour < 17 ? "AFTERNOON" : "EVENING");
-
-  // Actions
-  var actHtml = "";
+  var ah = "";
   for (var i = 0; i < ACTIONS.length; i++) {
     var a = ACTIONS[i];
-    actHtml += '<div class="action-item" style="border-color:' + a.c + '">';
-    actHtml += '<div class="bn action-label" style="color:' + a.c + '">' + a.i + ' ' + a.t + '</div>';
-    actHtml += '<div class="action-desc">' + a.d + '</div></div>';
+    ah += '<div class="act" style="border-color:'+a.c+'"><div class="bn act-l" style="color:'+a.c+'">'+a.t+'</div><div class="act-d">'+a.d+'</div></div>';
   }
-  document.getElementById("actionsEl").innerHTML = actHtml;
+  document.getElementById("actsEl").innerHTML = ah;
 
-  // Goals
-  var goalHtml = "";
-  for (var i = 0; i < GOALS.length; i++) {
-    goalHtml += '<div class="bn goal-item">' + GOALS[i] + '</div>';
-  }
-  document.getElementById("goalsEl").innerHTML = goalHtml;
+  var gh = "";
+  for (var i = 0; i < GOALS.length; i++) gh += '<div class="bn goal">'+GOALS[i]+'</div>';
+  document.getElementById("goalsEl").innerHTML = gh;
+}
 
-  // Channels
-  var chHtml = "";
+// ═══════════════════════════════
+// BOARDROOM
+// ═══════════════════════════════
+
+function buildBoard() {
+  var h = "";
   for (var i = 0; i < CHANNELS.length; i++) {
-    var ch = CHANNELS[i];
-    chHtml += '<button class="ch-btn" data-channel="' + ch.id + '">';
-    chHtml += '<div class="ch-icon">' + ch.icon + '</div>';
-    chHtml += '<div><div class="bn ch-name" style="color:' + ch.color + '">' + ch.name + '</div>';
-    chHtml += '<div class="ch-sub">' + ch.sub + '</div></div>';
-    chHtml += '<div class="ch-arrow">\u2192</div></button>';
+    var c = CHANNELS[i];
+    h += '<button class="ch-btn" data-ch="'+c.id+'"><span class="ch-ico">'+c.ico+'</span><div><div class="ch-nm" style="color:'+c.clr+'">'+c.nm+'</div><div class="ch-sb">'+c.sb+'</div></div><span class="ch-ar">\u203A</span></button>';
   }
-  document.getElementById("channelsEl").innerHTML = chHtml;
-
-  // Bind channel buttons
-  var btns = document.querySelectorAll("[data-channel]");
+  document.getElementById("chListEl").innerHTML = h;
+  var btns = document.querySelectorAll("[data-ch]");
   for (var i = 0; i < btns.length; i++) {
-    (function(btn) {
-      btn.addEventListener("click", function() {
-        openChannel(btn.getAttribute("data-channel"));
-      });
-    })(btns[i]);
+    (function(b) { b.addEventListener("click", function() { openChat(b.getAttribute("data-ch")); }); })(btns[i]);
   }
 }
 
-function doShowDash() {
-  currentChannel = null;
-  buildDashboard();
-  showScreen("dashScreen");
-}
-
-// ═══════════════════════════════════
+// ═══════════════════════════════
 // CHAT
-// ═══════════════════════════════════
+// ═══════════════════════════════
 
-function findChannel(id) {
-  for (var i = 0; i < CHANNELS.length; i++) {
-    if (CHANNELS[i].id === id) return CHANNELS[i];
-  }
-  return null;
+function findCh(id) { for (var i=0;i<CHANNELS.length;i++) if(CHANNELS[i].id===id) return CHANNELS[i]; return null; }
+
+function openChat(id) {
+  curCh = findCh(id);
+  if (!curCh) return;
+  document.getElementById("chatNm").textContent = curCh.nm;
+  document.getElementById("chatNm").style.color = curCh.clr;
+  document.getElementById("chatSb").textContent = curCh.sb;
+  document.getElementById("chatIco").textContent = curCh.ico;
+  document.getElementById("chatBack").style.color = curCh.clr;
+  switchTab("chatPane");
+  renderChat();
 }
 
-function openChannel(id) {
-  currentChannel = findChannel(id);
-  if (!currentChannel) return;
-
-  document.getElementById("backBtn").style.color = currentChannel.color;
-  document.getElementById("chatIcon").textContent = currentChannel.icon;
-  document.getElementById("chatTitle").textContent = currentChannel.name;
-  document.getElementById("chatTitle").style.color = currentChannel.color;
-  document.getElementById("chatSub").textContent = currentChannel.sub;
-  document.getElementById("sendBtn").style.background = currentChannel.color;
-
-  showScreen("chatScreen");
-  renderMessages();
-
-  // Proactive messaging
-  var h = histories[currentChannel.id];
-  if (h.length === 0) {
-    triggerProactive(currentChannel.id);
-  }
-}
-
-function renderMessages() {
+function renderChat() {
   var area = document.getElementById("msgArea");
-  var h = histories[currentChannel.id];
-
-  if (h.length === 0) {
-    area.innerHTML = '<div class="empty-msg">Start talking. They\'re listening.</div>';
-    return;
-  }
-
+  var h = hist[curCh.id];
+  if (!h.length) { area.innerHTML = '<div class="empty-st">Start talking. They\'re listening.</div>'; return; }
   var html = "";
   for (var i = 0; i < h.length; i++) {
-    var msg = h[i];
-    if (msg.role === "user") {
-      html += '<div class="user-bubble">' + escapeHtml(msg.text) + '</div>';
+    var m = h[i];
+    if (m.role === "user") {
+      html += '<div class="msg-user">' + esc(m.text) + '</div>';
     } else {
-      html += '<div class="char-group">';
-      var parts = msg.parsed || [];
+      var parts = m.parsed || [];
       for (var j = 0; j < parts.length; j++) {
         var p = parts[j];
-        var col = CHAR_COLORS[p.name] || "#888";
-        html += '<div style="max-width:88%">';
-        html += '<div class="bn char-name" style="color:' + col + '">' + escapeHtml(p.name) + '</div>';
-        html += '<div class="char-bubble" style="border-color:' + col + ';background:' + col + '11">' + escapeHtml(p.text) + '</div>';
-        html += '</div>';
+        var col = CCOLORS[p.name] || "#888";
+        html += '<div class="msg-char-wrap"><div class="msg-char-name" style="color:'+col+'">'+esc(p.name)+'</div><div class="msg-char">'+esc(p.text)+'</div></div>';
       }
-      html += '</div>';
     }
   }
-
   area.innerHTML = html;
   area.scrollTop = area.scrollHeight;
 }
 
-function parseCharacterMessages(text, channelId) {
+function parseChars(text, chId) {
   var lines = text.split("\n");
   var result = [];
-  var currentName = null;
-  var currentText = [];
-  var charPattern = /^(DANNY|RUSTY|MIKE MAC|WENDY|TYLER|MENTZER|JACOB|NEAL|ARI):\s*(.*)/;
-
+  var cn = null;
+  var ct = [];
+  var pat = /^(DANNY|RUSTY|MIKE MAC|WENDY|TYLER|MENTZER|JACOB|NEAL|ARI):\s*(.*)/;
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i].trim();
     if (!line) continue;
-    var match = line.match(charPattern);
+    var match = line.match(pat);
     if (match) {
-      if (currentName) {
-        result.push({ name: currentName, text: currentText.join(" ") });
-      }
-      currentName = match[1];
-      currentText = [match[2]];
-    } else if (currentName) {
-      currentText.push(line);
-    }
+      if (cn) result.push({name:cn, text:ct.join(" ")});
+      cn = match[1]; ct = [match[2]];
+    } else if (cn) { ct.push(line); }
   }
-  if (currentName) {
-    result.push({ name: currentName, text: currentText.join(" ") });
+  if (cn) result.push({name:cn, text:ct.join(" ")});
+  if (!result.length) {
+    var fb = {director:"DANNY",therapist:"WENDY",coach:"TYLER",edge:"JACOB",agent:"ARI"};
+    result.push({name:fb[chId]||"SYSTEM", text:text});
   }
-
-  if (result.length === 0) {
-    var fallbacks = { director: "DANNY", therapist: "WENDY", coach: "TYLER", edge: "JACOB", agent: "ARI" };
-    result.push({ name: fallbacks[channelId] || "SYSTEM", text: text });
-  }
-
   return result;
 }
 
-async function triggerProactive(channelId) {
-  if (isBusy) return;
-  isBusy = true;
-
-  var area = document.getElementById("msgArea");
-  area.innerHTML = '<div class="thinking-dot">thinking...</div>';
-
-  try {
-    var messages = [{ role: "user", content: PROACTIVE[channelId] }];
-    var data = await callAPI(channelId, messages);
-    var rawText = extractTextFromResponse(data);
-    var parsed = parseCharacterMessages(rawText, channelId);
-    histories[channelId].push({ role: "assistant", parsed: parsed, raw: rawText });
-  } catch (err) {
-    histories[channelId].push({ role: "assistant", parsed: [{ name: "SYSTEM", text: "Error: " + err.message }], raw: "" });
-  }
-
-  renderMessages();
-  isBusy = false;
-}
-
 async function doSend() {
-  var input = document.getElementById("msgInput");
-  var text = input.value.trim();
-  if (!text || isBusy || !currentChannel) return;
-
-  input.value = "";
-  isBusy = true;
+  var inp = document.getElementById("msgInput");
+  var text = inp.value.trim();
+  if (!text || busy || !curCh) return;
+  inp.value = "";
+  busy = true;
   document.getElementById("sendBtn").disabled = true;
 
-  var h = histories[currentChannel.id];
-  h.push({ role: "user", text: text });
-  renderMessages();
+  var h = hist[curCh.id];
+  h.push({role:"user", text:text});
+  renderChat();
 
-  // Show thinking indicator
   var area = document.getElementById("msgArea");
-  var thinkEl = document.createElement("div");
-  thinkEl.className = "thinking-dot";
-  thinkEl.textContent = "thinking...";
-  area.appendChild(thinkEl);
+  var tk = document.createElement("div");
+  tk.className = "typing";
+  tk.innerHTML = '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
+  area.appendChild(tk);
   area.scrollTop = area.scrollHeight;
 
   try {
-    var apiMessages = [];
+    var msgs = [];
     for (var i = 0; i < h.length; i++) {
-      var m = h[i];
-      apiMessages.push({
-        role: m.role === "user" ? "user" : "assistant",
-        content: m.role === "user" ? m.text : (m.raw || "")
-      });
+      msgs.push({ role: h[i].role === "user" ? "user" : "assistant", content: h[i].role === "user" ? h[i].text : (h[i].raw || "") });
     }
-
-    var data = await callAPI(currentChannel.id, apiMessages);
-    var rawText = extractTextFromResponse(data);
-    var parsed = parseCharacterMessages(rawText, currentChannel.id);
-    h.push({ role: "assistant", parsed: parsed, raw: rawText });
-  } catch (err) {
-    h.push({ role: "assistant", parsed: [{ name: "SYSTEM", text: "Error: " + err.message }], raw: "" });
+    var data = await callAPI(curCh.id, msgs);
+    var raw = getTextFromResponse(data);
+    var parsed = parseChars(raw, curCh.id);
+    h.push({role:"assistant", parsed:parsed, raw:raw});
+  } catch(err) {
+    h.push({role:"assistant", parsed:[{name:"SYSTEM",text:"Error: "+err.message}], raw:""});
   }
 
-  if (thinkEl.parentNode) thinkEl.parentNode.removeChild(thinkEl);
-  renderMessages();
-  isBusy = false;
+  if (tk.parentNode) tk.parentNode.removeChild(tk);
+  renderChat();
+  busy = false;
   document.getElementById("sendBtn").disabled = false;
-  input.focus();
+  inp.focus();
 }
 
-// ═══════════════════════════════════
-// API
-// ═══════════════════════════════════
+// ═══════════════════════════════
+// DISCOVERY
+// ═══════════════════════════════
 
-async function callAPI(channelId, messages) {
+async function loadDiscovery() {
+  var el = document.getElementById("discContent");
+  el.innerHTML = '<div class="disc-loading"><span class="typing-dots"><span>.</span><span>.</span><span>.</span></span> Your boardroom is searching...</div>';
+  document.getElementById("discRefresh").disabled = true;
+
+  try {
+    var msgs = [{role:"user", content:"Find me some good stuff today. Mix it up."}];
+    var data = await callAPI("discovery", msgs);
+    var raw = getTextFromResponse(data);
+    var parsed = parseChars(raw, "director");
+
+    var html = "";
+    for (var i = 0; i < parsed.length; i++) {
+      var p = parsed[i];
+      var col = CCOLORS[p.name] || "#888";
+      // Try to extract URL from text
+      var urlMatch = p.text.match(/(https?:\/\/[^\s)]+)/);
+      var cleanText = p.text;
+      if (urlMatch) cleanText = p.text.replace(urlMatch[0], "").trim();
+
+      html += '<div class="disc-card">';
+      html += '<div class="disc-card-top"><span class="disc-card-who" style="color:'+col+'">'+esc(p.name)+'</span></div>';
+      html += '<div class="disc-card-desc">' + esc(cleanText) + '</div>';
+      if (urlMatch) html += '<a class="disc-card-link" href="'+esc(urlMatch[0])+'" target="_blank">Open \u2192</a>';
+      html += '</div>';
+    }
+    el.innerHTML = html || '<div class="disc-loading">Nothing found. Try again.</div>';
+  } catch(err) {
+    el.innerHTML = '<div class="disc-loading">Error: '+esc(err.message)+'</div>';
+  }
+
+  document.getElementById("discRefresh").disabled = false;
+}
+
+// ═══════════════════════════════
+// API
+// ═══════════════════════════════
+
+async function callAPI(chId, messages) {
+  var sysPrompt = chId === "discovery" ? DISC_PROMPT : PROMPTS[chId];
   var body = {
     model: "claude-sonnet-4-20250514",
     max_tokens: 1024,
-    system: PROMPTS[channelId],
+    system: sysPrompt,
     messages: messages,
-    tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }]
+    tools: [{type:"web_search_20250305", name:"web_search", max_uses:3}]
   };
 
-  var response = await fetch("https://api.anthropic.com/v1/messages", {
+  var res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -641,60 +668,52 @@ async function callAPI(channelId, messages) {
     body: JSON.stringify(body)
   });
 
-  var data = await response.json();
-
-  if (data.error) {
-    throw new Error(data.error.message || "API error");
-  }
-
+  var data = await res.json();
+  if (data.error) throw new Error(data.error.message || "API error");
   return data;
 }
 
-function extractTextFromResponse(data) {
+function getTextFromResponse(data) {
   var texts = [];
   var content = data.content || [];
   for (var i = 0; i < content.length; i++) {
-    if (content[i].type === "text" && content[i].text) {
-      texts.push(content[i].text);
-    }
+    if (content[i].type === "text" && content[i].text) texts.push(content[i].text);
   }
   return texts.join("\n") || "...";
 }
 
-// ═══════════════════════════════════
-// UTILS
-// ═══════════════════════════════════
+function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 
-function escapeHtml(str) {
-  var div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
+// ═══════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════
+
+document.getElementById("enterBtn").addEventListener("click", doEnter);
+document.getElementById("apiInput").addEventListener("keydown", function(e) { if (e.key === "Enter") doEnter(); });
+document.getElementById("gearBtn").addEventListener("click", doGear);
+document.getElementById("chatBack").addEventListener("click", function() { switchTab("boardPane"); });
+document.getElementById("sendBtn").addEventListener("click", doSend);
+document.getElementById("msgInput").addEventListener("keydown", function(e) { if (e.key === "Enter") doSend(); });
+document.getElementById("discRefresh").addEventListener("click", loadDiscovery);
+
+var tabBtns = document.querySelectorAll(".tab-btn");
+for (var i = 0; i < tabBtns.length; i++) {
+  (function(btn) {
+    btn.addEventListener("click", function() { switchTab(btn.getAttribute("data-tab")); });
+  })(tabBtns[i]);
 }
 
-// ═══════════════════════════════════
-// EVENT LISTENERS
-// ═══════════════════════════════════
-
-document.getElementById("enterBtn").addEventListener("click", doSaveKey);
-document.getElementById("gearBtn").addEventListener("click", doShowSetup);
-document.getElementById("backBtn").addEventListener("click", doShowDash);
-document.getElementById("sendBtn").addEventListener("click", doSend);
-document.getElementById("msgInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") doSend();
-});
-document.getElementById("apiInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") doSaveKey();
-});
-
-// ═══════════════════════════════════
+// ═══════════════════════════════
 // INIT
-// ═══════════════════════════════════
+// ═══════════════════════════════
 
 if (apiKey) {
-  buildDashboard();
-  showScreen("dashScreen");
+  document.getElementById("app").classList.add("on");
+  buildDash();
+  buildBoard();
+  switchTab("dashPane");
 } else {
-  showScreen("setupScreen");
+  document.getElementById("setupScreen").classList.add("on");
 }
 </script>
 
