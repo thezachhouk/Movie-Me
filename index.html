@@ -396,6 +396,11 @@ function render(){
 function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
 document.getElementById("inp").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
 
+ document.querySelector(".sb").addEventListener("click",saveKey);
+document.querySelector(".gear").addEventListener("click",showSetup);
+document.getElementById("bb").addEventListener("click",showDash);
+document.getElementById("snb").addEventListener("click",send);
+ 
 init();
 </script>
 
