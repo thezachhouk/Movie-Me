@@ -401,8 +401,11 @@ document.querySelector(".gear").addEventListener("click",showSetup);
 document.getElementById("bb").addEventListener("click",showDash);
 document.getElementById("snb").addEventListener("click",send);
  
-init();
+init()} catch(e) { document.body.innerHTML='<pre style="color:red;padding:20px">'+e.message+'\n'+e.stack+'</pre>'; }
+ ;
 </script>
+  try {
+
 
 </body>
 </html>
