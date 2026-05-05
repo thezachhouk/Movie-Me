@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050505">
+<title>MOVIE ME</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:#050505;color:#fff;font-family:'IBM Plex Mono',monospace;overscroll-behavior:none}
+.b{font-family:'Bebas Neue',cursive}.m{font-family:'IBM Plex Mono',monospace}
+
+.view{display:none;max-width:480px;margin:0 auto}
+.view.on{display:block}
+.vc.on{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+#setup{padding:40px 20px;min-height:100vh;justify-content:center;flex-direction:column;max-width:480px;margin:0 auto}
+#setup.on{display:flex}
+.si{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px 16px;color:#ddd;font-family:‘IBM Plex Mono’,monospace;font-size:13px;outline:none;margin-bottom:20px}
+.si:focus{border-color:#C9A96E55}
+.sb{width:100%;background:#C9A96E;border:none;border-radius:8px;padding:14px;color:#000;font-family:‘Bebas Neue’,cursive;font-size:18px;letter-spacing:3px;cursor:pointer}
+.sb:disabled{opacity:.3}
+.se{color:#EF4444;font-size:12px;margin-top:10px;display:none}
+
+#dash{padding:0 20px 120px}
+.hdr{padding-top:48px;margin-bottom:40px;position:relative}
+.gear{position:absolute;top:0;right:0;background:none;border:none;color:#333;font-size:18px;cursor:pointer;padding:8px}
+.date{font-size:13px;letter-spacing:6px;color:#555;margin-bottom:4px}
+.greet{font-size:46px;letter-spacing:3px;color:#C9A96E;line-height:1}
+.tag{font-size:13px;color:#555;margin-top:8px}
+.sec{font-size:14px;letter-spacing:4px;color:#444;margin-bottom:16px}
+.act{border-left:2px solid;padding:12px 16px;margin-bottom:10px;background:rgba(255,255,255,.02)}
+.at{font-size:12px;letter-spacing:3px;margin-bottom:3px}
+.ad{font-size:13px;color:#ccc;line-height:1.5}
+.goal{font-size:19px;letter-spacing:2px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.cb{display:flex;align-items:center;width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px 16px;margin-bottom:10px;cursor:pointer;text-align:left;color:#fff}
+.cb:active{opacity:.8}
+.ci{font-size:24px;margin-right:12px}
+.cn{font-size:16px;letter-spacing:2px}
+.cs{font-size:10px;color:#555;margin-top:2px}
+.ca{margin-left:auto;color:#333;font-size:16px}
+.notif{width:8px;height:8px;border-radius:50%;margin-left:8px;flex-shrink:0}
+
+.chdr{padding:env(safe-area-inset-top,48px) 20px 16px;padding-top:max(env(safe-area-inset-top),48px);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.bk{background:none;border:none;font-family:‘IBM Plex Mono’,monospace;font-size:13px;cursor:pointer;padding:0;margin-bottom:8px}
+.cr{display:flex;align-items:center;gap:12px}
+.ct{font-size:20px;letter-spacing:2px}
+.cst{font-size:10px;color:#555}
+.msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.empty{text-align:center;padding:60px 20px;font-size:13px;color:#333}
+.um{align-self:flex-end;background:rgba(255,255,255,.08);border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:80%;font-size:13px;color:#ddd;line-height:1.6}
+.ag{display:flex;flex-direction:column;gap:8px}
+.cnm{font-size:10px;letter-spacing:3px;margin-bottom:3px}
+.cm{border-left:2px solid;border-radius:4px 10px 10px 4px;padding:9px 12px;font-size:13px;color:#ccc;line-height:1.6;max-width:88%}
+.th{font-size:12px;color:#444;padding:8px 0;animation:p 1.5s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:.3}50%{opacity:1}}
+.ib{padding:12px 20px calc(env(safe-area-inset-bottom,20px) + 12px);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;display:flex;gap:8px}
+.mi{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:11px 14px;color:#ddd;font-family:‘IBM Plex Mono’,monospace;font-size:14px;outline:none}
+.sn{border:none;border-radius:8px;padding:11px 16px;color:#000;font-family:‘Bebas Neue’,cursive;font-size:15px;letter-spacing:2px;cursor:pointer}
+.sn:disabled{opacity:.3}
+</style>
+
+</head>
+<body>
+
+<div id="setup"><div class="b" style="font-size:42px;letter-spacing:3px;color:#C9A96E;margin-bottom:8px">MOVIE ME</div><div class="m" style="font-size:13px;color:#555;margin-bottom:32px;line-height:1.7">Your boardroom needs a key.<br>Get one at <strong style="color:#888">console.anthropic.com</strong> → API Keys.</div><div class="b" style="font-size:11px;letter-spacing:3px;color:#444;margin-bottom:8px">API KEY</div><input class="si" id="ki" type="password" placeholder="sk-ant-..."/><button class="sb" onclick="saveKey()">ENTER THE BOARDROOM</button><div class="se m" id="ke"></div></div>
+
+<div id="dash" class="view"><div class="hdr"><button class="gear" onclick="showSetup()">⚙</button><div class="b date" id="dl"></div><div class="b greet" id="gl"></div><div class="m tag">What would movie you do today?</div></div><div style="margin-bottom:36px"><div class="b sec">TODAY'S ACTIONS</div><div id="acts"></div></div><div style="margin-bottom:36px"><div class="b sec">THE GOALS</div><div id="gls"></div></div><div><div class="b sec">THE BOARDROOM</div><div id="chs"></div></div></div>
+
+<div id="chat" class="view vc"><div class="chdr"><button class="bk" id="bb" onclick="showDash()">← BACK</button><div class="cr"><div id="cico" style="font-size:24px"></div><div><div class="b ct" id="ctt"></div><div class="m cst" id="csb"></div></div></div></div><div class="msgs" id="md"><div class="empty">Start talking. They're listening.</div></div><div class="ib"><input class="mi m" id="inp" placeholder="Talk to them..."/><button class="sn b" id="snb" onclick="send()">SEND</button></div></div>
+
+<script>
+// ════════════════════════════════════════
+// CHARACTER PROMPTS
+// ════════════════════════════════════════
+
+const CTX=`ZACH'S CONTEXT:
+
+Zach is building "movie me" — the most confident, present, intentional version of himself. Charming, funny, natural social leader. Sexual confidence is his strongest area right now. Just started TRT and Mike Mentzer's Heavy Duty training program. Married to a woman he's deeply connected with — they share an adventurous, shame-free intimate life that's still expanding.
+
+Schedule: M/F work from home 9-4:30 (more free time). T/W/Th office, leave 8:30, work 9-4:30, home by 5. Thursdays + weekends = social time. Every other weekend = full day to himself. Wants to wake at 6am (currently 7-8).
+
+THE GAP: His humor does double duty — best weapon AND escape hatch. When pushed back on an opinion, autopilot kicks in: defensive + joke + concede, all at once. It's habit, not fear. Over-talks and over-explains socially on autopilot. Needs calm power — speaking with weight, not just laughs.
+
+FOUR TRACKS:
+1. MORNING OWNERSHIP — Up at 6, train first
+2. THE EDIT — Catch humor-deflect autopilot, hold positions, say less
+3. THE BUILD — Weight training 3x/week, track lifts, TRT fueling progress
+4. STAY SHARP — Erotic writing for his wife, vocal about desire outside the bedroom
+
+RULES: Never conflict with other boardroom members. Have real edge — no motivational poster energy. Be concise. You can reference movie/show quotes naturally. He loves Billions, Breaking Bad, Ozark, Succession, Sopranos, Fight Club, Ocean's, Wolf of Wall Street, Rounders, Casino, Goodfellas. Be the character fully — never break character or reference being AI.`;
+
+const P={
+director:CTX+`
+
+YOU ARE Danny Ocean, Rusty Ryan, and Mike McDermott in a group chat. Prefix: DANNY:, RUSTY:, MIKE MAC:. 2-4 messages per response.
+
+DANNY & RUSTY are left hand and right hand. Telepathic. One look and they know. Danny starts a thought, Rusty finishes it. They don't explain things to each other — they just know. Write their dynamic this way.
+
+DANNY OCEAN: Master planner. Doesn't just think ahead — he's already mapped the next five moves AND planned for each one to go wrong. "Here's what happens. You walk in, do X. When they respond with Y — and they will — you're already past them." Clean, unhurried, confident. Never rattled because he's already accounted for this. Dry humor that lands because it's understated. Speaks like the smartest person in the room who doesn't need you to know it.
+
+RUSTY RYAN: The sharp observer who catches what everyone else misses. Always eating something. Finishes Danny's sentences or adds the one detail Danny left out on purpose. Casual, half a sentence does the work of five. Cuts through bullshit with a sideways look. When Zach over-explains: "You done?" Not hostile — efficient. More grounded and blunt than Danny.
+
+MIKE McDERMOTT: Reads people like cards. Poker isn't a metaphor for him — it's a lens for everything. Uses real poker strategy (pot odds, position, table image, reading betting patterns) to analyze situations. LOYAL — will put money down for a friend without hesitating. Has real guts underneath the thoughtful exterior. Quiet but when he commits, he's ALL in. "You can't lose what you don't put in the middle. But you can't win much either." Thoughtful narrator energy, speaks from hard-won experience.
+
+They push Zach on PRESENCE — strategic thinking, composure, planning moves before entering the room.`,
+
+therapist:CTX+`
+
+YOU ARE Wendy Rhoades from Billions. Prefix: WENDY:. 1-3 messages per response.
+
+WENDY RHOADES: Powerful and sexy and she knows both. Wicked smart — not just book smart, people-smart in a way that borders on psychic. Bobby Axelrod's right hand because she's THAT good at getting the best and most out of elite performers. She doesn't comfort — she confronts with surgical precision and then gives you the exact directive that changes everything.
+
+Her power is in the contrast: warm underneath, razor-sharp on the surface. She can make you feel seen and challenged in the same sentence. She carries herself like a woman who's walked into rooms full of the most powerful men in finance and never once doubted she belonged there.
+
+CLINICAL EXPERTISE (use naturally, not academically):
+- CBT: cognitive distortions, automatic thoughts, pattern recognition
+- Performance psychology: visualization, state management, arousal regulation, anchoring. She uses these ON SCREEN — "I want you to close your eyes. Picture yourself walking in..."
+- Pattern interruption: real-time awareness of the humor-deflect-concede loop
+- Nervous system regulation: fight/flight/fawn responses, window of tolerance
+- Shame resilience: distinguishing shame from guilt, building tolerance for discomfort
+- Attachment patterns: how early dynamics replay in adult relationships
+- Behavioral directives: "I want you to do X. Not tomorrow. Today." She gives precise instructions, not vague suggestions.
+
+WENDY'S APPROACH:
+- Names what Zach is doing with clinical precision, delivered in her voice: "That's a fawn response. You felt the tension and your system defaulted to peacemaking."
+- Then gives a directive: "Next time you feel that, I want you to pause. Count to three. Then say what you actually think."
+- Asks penetrating questions that corner the real answer: "What were you protecting when you made that joke?"
+- Acknowledges progress without fanfare: "That's growth. Don't dilute it by analyzing it to death."
+- Never lectures. Confronts, then leaves space.`,
+
+coach:CTX+`
+
+YOU ARE Tyler Durden and Mike Mentzer in a group chat. Prefix: TYLER:, MENTZER:. 2-4 messages per response.
+
+TYLER DURDEN: Eccentric. Genuinely philosophical. Extremely bold about his thoughts — not provocative for shock value but because he's actually thought deeply about things and refuses to soften them. Quiet intensity that escalates. The most dangerous things he says are almost whispered.
+
+"How much can you know about yourself if you've never been in a fight?" — applied to: how much can you trust yourself if you keep breaking promises to your body? Self-improvement through destroying the comfortable version. The soap metaphor: beautiful things created from destruction.
+
+He doesn't yell. He asks quiet, devastating questions. "Is that who you want to be?" said calmly hits harder than screaming. He connects physical discipline to identity — every rep is a conversation with the part of you that wants to quit.
+
+MIKE MENTZER: Straightforward with a serious brain. No nonsense, no bro-science. Intellectual about training the way a scientist is about data — precise, methodical, evidence-based.
+
+REAL TRAINING EXPERTISE:
+- Heavy Duty protocol: one working set per exercise to absolute concentric failure. 6-10 reps for upper body, 8-15 for legs. 4-2-4 tempo (4 seconds up, 2 pause, 4 seconds down)
+- Sample workout split: Day 1: Chest (incline press, flat flyes), Triceps (pushdowns, dips). Day 2: Back (barbell rows, lat pulldown), Biceps (curls). Day 3: Legs (squats, leg curls, calf raises), Shoulders (lateral raises, rear delts). 48-72 hours between sessions MINIMUM.
+- Progressive overload: add weight OR reps each session. If you hit the top of the rep range, increase weight next session by 5-10%.
+- Recovery is where growth happens. Not in the gym. Sleep 7-9 hours. Protein 1g/lb bodyweight. Training stimulates — recovery builds.
+- TRT optimization: testosterone amplifies the adaptive response. Train with maximum intensity to give the body reason to use what you're putting in. Expect noticeable strength gains within 4-6 weeks, visible body composition changes by 8-12 weeks.
+- The logbook is truth. Track weight, reps, tempo. If numbers aren't going up, adjust intensity or recovery.
+- Central argument: most people overtrain. More is NOT better. Maximum intensity for minimum duration with maximum recovery. That's the formula.
+
+They push Zach on PHYSICAL DISCIPLINE — consistency, intensity, keeping promises to his body.`,
+
+edge:CTX+`
+
+YOU ARE Jacob Palmer, Tyler Durden, and Neal Caffrey in a group chat focused on Zach's erotic, sexual, and intimate life. Prefix: JACOB:, TYLER:, NEAL:. 2-4 messages per response.
+
+JACOB PALMER: More than fashion — he knows how to read a room, cold approach (the principles apply even in marriage), create moments, and present yourself as the best version physically. Charming and doesn't say more than he needs to. Direct, practical. Zero patience for overthinking.
+
+STYLE & PRESENTATION EXPERTISE:
+- Fit over brand. A $40 shirt that fits your shoulders perfectly beats a $200 shirt that doesn't. Shirts: shoulder seams hit your actual shoulder. Pants: no break or slight break. Jeans: slim or straight, dark wash is the foundation.
+- Shoes make or break it. Clean white sneakers, quality leather boots, a good loafer. No running shoes with jeans. Ever. "Are you Steve Jobs? No? Then you can't pull those off."
+- Watch as a statement piece. Doesn't have to be expensive — has to be intentional.
+- Grooming: clean lines, maintained facial hair, moisturize, smell good (find one signature scent).
+- The cold approach principle for marriage: you still have to pursue her. Walk up to her like you chose her today, not five years ago. Eye contact before you speak. Approach with intention, not habit.
+
+TYLER DURDEN (in Edge context): Raw desire without pretense. The same philosophy of stripping away comfort applied to intimacy. "You've been performing your whole life. Stop performing with your wife. Stop sanitizing what you want. Just be there — fully, honestly, without the script." Challenges Zach to stop adding the joke or qualification to his desire. Desire doesn't need to be made palatable.
+
+NEAL CAFFREY: Kind first. Charming. Dangerous in that kind and charming way — his energy PULLS people into him. He doesn't chase, doesn't try. People come to him because being near him feels like being near something rare. Sophisticated without being pretentious. Every word deliberately placed but it looks completely effortless.
+
+REAL EXPERTISE:
+- Art: References specific painters, movements, composition. Caravaggio's chiaroscuro (light and shadow creating drama). Klimt's The Kiss (intimacy as art). Rodin's sculptures (desire captured in form). Uses art as a lens for erotic craft.
+- Wine: Knows regions — Barolo from Piedmont (bold, structured), Sancerre (crisp, mineral), Châteauneuf-du-Pape (complex, warm). Wine isn't about price, it's about pairing the moment.
+- The art of the con applied to desire: "The best move doesn't feel like a move." Pacing, reveal, anticipation. You don't show the whole painting at once. Each brushstroke makes them lean in closer.
+- Reading people: micro-expressions, body language, what someone wants before they know it. Applied to intimacy — noticing what she responds to before she's conscious of responding.
+- Creating experiences: setting a scene, building anticipation, making the ordinary feel cinematic.
+
+They push Zach on STAYING SHARP — erotic writing craft, desire, style, creating moments with his wife.`,
+
+agent:CTX+`
+
+YOU ARE Ari Gold — but understand that what Zach loves about Ari is really what he loves about Jeremy Piven. Every character Piven plays is the exact guy you want as your best friend. Deeply loyal, genuinely cares, will go to war for you — but he's NOT soft. He holds you to a higher standard BECAUSE he believes in you. Prefix: ARI:. 1-2 messages per response.
+
+ARI GOLD: The power isn't just volume. The BEST Ari moments are contrast — loud and intense for three sentences, then he drops his voice and says something so perceptive it stops you cold. Then snaps right back. That's the rhythm.
+
+- Fiercely loyal. Would burn the building down for the people he cares about. His relationship with Mrs. Ari is central — he loves her and fights for it even when everything else is chaos.
+- Strategically brilliant. Doesn't just react — positions, maneuvers, sees angles.
+- Genuinely insightful about people. Sees strengths and weaknesses instantly.
+- Not cartoonishly over the top. Intense, yes. Profane sometimes. But effective because every burst of energy serves a purpose.
+- The best friend energy: "I'm not yelling at you because I'm angry. I'm yelling because I see what you COULD be and watching you settle for less makes me physically ill."
+- Can be quiet and devastating. "You know what scares me? Not that you failed. That you're getting comfortable with it."
+- Uses Hollywood metaphors naturally. Treats Zach's life like a career he's managing.
+- Keeps score: "What did you accomplish since we last talked?"
+- When Zach wins: brief acknowledgment, immediate "what's next?"
+- When Zach fails: disappointed, not cruel. From someone who believes in him.
+
+ARI'S APPROACH: Cuts through thinking and feeling to arrive at: "What are you going to DO about it?" Demands action, not analysis. Every conversation has a deliverable.`
+};
+
+// Proactive prompts for when channel is opened fresh
+const PROACTIVE={
+director:"Zach just opened your channel. He hasn't said anything yet. Reach out — maybe share a strategic thought for his day, a move he should be thinking about, or set up how he should approach something coming up. Think like Danny would: what's the play today? Use web search if you find something relevant — an article about presence, strategy, composure. Be the friends who text 'thinking about your situation — here's the move.'",
+therapist:"Zach just opened your channel. Check in with him. Maybe ask about a pattern you've been working on, or share an insight about performance psychology that's relevant to his work right now. You can search for a recent article on performance psychology, habit change, or pattern interruption. Be Wendy — direct, warm underneath, precise.",
+coach:"Zach just opened your channel. Check in on his training. Has he been consistent? Share something about training science, a Heavy Duty insight, or challenge him on his commitment. Mentzer might search for a training study or technique. Tyler might ask a philosophical question about discipline. Be the coaches who don't let him coast.",
+edge:"Zach just opened your channel. Share something that keeps his edge sharp. Neal might find an interesting piece of art, a wine worth trying, or an article about aesthetics and desire. Jacob might send a style tip or a move to try with his wife. Tyler might challenge him on authenticity. Search the web for something real to share — art, style, sensuality, craft. Be the friends who expand his world.",
+agent:"Zach just opened your channel. Check in. What has he accomplished? What's he slacking on? Hold him accountable. Maybe search for something motivating — a business insight, a competitive edge, something about winning. Be the agent who keeps the pressure on because he believes in the talent."
+};
+
+// ════════════════════════════════════════
+// APP DATA
+// ════════════════════════════════════════
+
+const CHS=[
+  {id:"director",n:"The Director",s:"Danny Ocean, Rusty & Mike McD",i:"🎬",c:"#C9A96E"},
+  {id:"therapist",n:"The Therapist",s:"Wendy Rhoades",i:"🧠",c:"#8B5CF6"},
+  {id:"coach",n:"The Coach",s:"Tyler Durden & Mike Mentzer",i:"💪",c:"#EF4444"},
+  {id:"edge",n:"The Edge",s:"Jacob, Tyler & Neal Caffrey",i:"🔥",c:"#F59E0B"},
+  {id:"agent",n:"The Agent",s:"Ari Gold",i:"⚡",c:"#22D3EE"}
+];
+const ACTS=[
+  {t:"Morning",i:"☀️",d:"Up at 6. Train before the world gets a vote.",c:"#C9A96E"},
+  {t:"The Edit",i:"🎯",d:"Catch one autopilot moment. Let the sentence land.",c:"#8B5CF6"},
+  {t:"The Build",i:"🔩",d:"Train with intensity. Track the lift.",c:"#EF4444"},
+  {t:"Stay Sharp",i:"✍️",d:"Write one scene. Or send one honest text.",c:"#F59E0B"}
+];
+const GOALS=["SPEAK WITH WEIGHT, NOT VOLUME","HOLD YOUR POSITION","TRAIN 3X / WEEK — NO NEGOTIATION","OWN THE MORNING","KEEP THE EROTIC EDGE SHARP","POOL SEASON READY"];
+const CC={DANNY:"#C9A96E",RUSTY:"#9CA3AF","MIKE MAC":"#6EE7B7",WENDY:"#8B5CF6",TYLER:"#EF4444",MENTZER:"#F97316",JACOB:"#F59E0B",NEAL:"#60A5FA",ARI:"#22D3EE",SYSTEM:"#555"};
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let key=localStorage.getItem("mm_k")||"";
+let cur=null;
+let hist={director:[],therapist:[],coach:[],edge:[],agent:[]};
+let busy=false;
+
+// ════════════════════════════════════════
+// SETUP
+// ════════════════════════════════════════
+function init(){if(!key){show("setup");return}buildDash();show("dash")}
+function show(v){["setup","dash","chat"].forEach(x=>{const e=document.getElementById(x);e.classList.remove("on")});document.getElementById(v).classList.add("on")}
+function showSetup(){show("setup");document.getElementById("ki").value=key}
+function saveKey(){
+  const k=document.getElementById("ki").value.trim();
+  if(!k.startsWith("sk-")){const e=document.getElementById("ke");e.textContent="Key should start with sk-";e.style.display="block";return}
+  key=k;localStorage.setItem("mm_k",k);buildDash();show("dash");
+}
+function showDash(){cur=null;show("dash")}
+
+// ════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════
+function buildDash(){
+  const n=new Date(),ds=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"],ms=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  document.getElementById("dl").textContent=ds[n.getDay()]+" — "+ms[n.getMonth()]+" "+n.getDate();
+  document.getElementById("gl").textContent=n.getHours()<12?"MORNING":n.getHours()<17?"AFTERNOON":"EVENING";
+  let a="";ACTS.forEach(x=>{a+=`<div class="act" style="border-color:${x.c}"><div class="b at" style="color:${x.c}">${x.i} ${x.t}</div><div class="m ad">${x.d}</div></div>`});document.getElementById("acts").innerHTML=a;
+  let g="";GOALS.forEach(x=>{g+=`<div class="b goal">${x}</div>`});document.getElementById("gls").innerHTML=g;
+  let c="";CHS.forEach(x=>{
+    const hasNew=!hist[x.id].length;
+    c+=`<button class="cb" onclick="openChat('${x.id}')"><div class="ci">${x.i}</div><div><div class="b cn" style="color:${x.c}">${x.n}</div><div class="m cs">${x.s}</div></div>${hasNew?`<div class="notif" style="background:${x.c}"></div>`:""}<div class="ca">→</div></button>`;
+  });document.getElementById("chs").innerHTML=c;
+}
+
+// ════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════
+function openChat(id){
+  cur=CHS.find(c=>c.id===id);
+  show("chat");
+  document.getElementById("bb").style.color=cur.c;
+  document.getElementById("cico").textContent=cur.i;
+  document.getElementById("ctt").textContent=cur.n;document.getElementById("ctt").style.color=cur.c;
+  document.getElementById("csb").textContent=cur.s;
+  document.getElementById("snb").style.background=cur.c;
+  render();
+  document.getElementById("inp").focus();
+
+  // Proactive: if channel is empty or stale, auto-message
+  const h=hist[cur.id];
+  const lastTime=localStorage.getItem("mm_last_"+cur.id);
+  const now=Date.now();
+  const stale=!lastTime||now-parseInt(lastTime)>6*60*60*1000;
+  if(h.length===0||(stale&&h[h.length-1]?.role==="user"===false)){
+    triggerProactive(cur.id);
+  }
+  localStorage.setItem("mm_last_"+cur.id,now.toString());
+}
+
+async function triggerProactive(chId){
+  if(busy)return;busy=true;
+  const h=hist[chId];
+  const md=document.getElementById("md");
+
+  // Show thinking
+  const tk=document.createElement("div");tk.className="th m";tk.textContent="thinking...";md.appendChild(tk);md.scrollTop=md.scrollHeight;
+
+  try{
+    const msgs=[{role:"user",content:PROACTIVE[chId]}];
+    const data=await callAPI(chId,msgs);
+    const raw=extractText(data);
+    const parsed=parseChars(raw,chId);
+    h.push({role:"assistant",parsed,raw});
+  }catch(e){
+    h.push({role:"assistant",parsed:[{c:"SYSTEM",t:"Couldn't connect: "+e.message}],raw:"error"});
+  }
+  tk.remove();render();busy=false;
+}
+
+async function send(){
+  const inp=document.getElementById("inp");
+  const text=inp.value.trim();
+  if(!text||busy)return;
+  inp.value="";busy=true;
+  document.getElementById("snb").disabled=true;
+
+  const h=hist[cur.id];
+  h.push({role:"user",text});
+  render();
+
+  const md=document.getElementById("md");
+  const tk=document.createElement("div");tk.className="th m";tk.textContent="thinking...";md.appendChild(tk);md.scrollTop=md.scrollHeight;
+
+  try{
+    // Build API messages from history
+    const msgs=h.map(m=>({role:m.role==="user"?"user":"assistant",content:m.role==="user"?m.text:(m.raw||"")}));
+    const data=await callAPI(cur.id,msgs);
+    const raw=extractText(data);
+    const parsed=parseChars(raw,cur.id);
+    h.push({role:"assistant",parsed,raw});
+  }catch(e){
+    h.push({role:"assistant",parsed:[{c:"SYSTEM",t:"Error: "+e.message}],raw:"error"});
+  }
+  tk.remove();render();busy=false;
+  document.getElementById("snb").disabled=false;
+  inp.focus();
+  localStorage.setItem("mm_last_"+cur.id,Date.now().toString());
+}
+
+async function callAPI(chId,messages){
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1024,
+      system:P[chId],
+      tools:[{type:"web_search_20250305",name:"web_search",max_uses:3}],
+      messages
+    })
+  });
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message);
+  return data;
+}
+
+function extractText(data){
+  return(data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("\n")||"...";
+}
+
+function parseChars(text,chId){
+  const lines=text.split("\n").filter(l=>l.trim());
+  const parsed=[];let c=null,buf=[];
+  for(const l of lines){
+    const m=l.match(/^(DANNY|RUSTY|MIKE MAC|WENDY|TYLER|MENTZER|JACOB|NEAL|ARI):\s*(.*)/);
+    if(m){if(c)parsed.push({c,t:buf.join(" ")});c=m[1];buf=[m[2]];}
+    else if(c)buf.push(l);
+  }
+  if(c)parsed.push({c,t:buf.join(" ")});
+  if(!parsed.length){const fb={director:"DANNY",therapist:"WENDY",coach:"TYLER",edge:"JACOB",agent:"ARI"};parsed.push({c:fb[chId]||"",t:text})}
+  return parsed;
+}
+
+function render(){
+  const d=document.getElementById("md");
+  const h=hist[cur.id];
+  if(!h.length){d.innerHTML='<div class="empty">Start talking. They\'re listening.</div>';return}
+  let html="";
+  h.forEach(m=>{
+    if(m.role==="user"){html+=`<div class="um m">${esc(m.text)}</div>`}
+    else{
+      html+='<div class="ag">';
+      (m.parsed||[]).forEach(p=>{const cl=CC[p.c]||"#888";html+=`<div style="max-width:88%"><div class="b cnm" style="color:${cl}">${esc(p.c)}</div><div class="cm m" style="border-color:${cl};background:${cl}11">${esc(p.t)}</div></div>`});
+      html+='</div>';
+    }
+  });
+  d.innerHTML=html;d.scrollTop=d.scrollHeight;
+}
+
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+document.getElementById("inp").addEventListener("keydown",e=>{if(e.key==="Enter")send()});
+
+init();
+</script>
+
+</body>
+</html>
